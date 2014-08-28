@@ -227,7 +227,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
           /* Call apply function for once, not for each close operation. */
           for (var j = 0; j < tbClosed.length; j++) {
             $modalStack.dismissAll(tbClosed[j]);
-          }  
+          }
         }
       });
 
@@ -267,7 +267,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
       };
 
       $modalStack.close = function (modalInstance, result) {
-        var modalWindow = openedWindows.get(modalInstance)
+        var modalWindow = openedWindows.get(modalInstance);
         if(!modalWindow) { return; }
         modalWindow = modalWindow.value;
         if (modalWindow) {
@@ -277,7 +277,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
       };
 
       $modalStack.dismiss = function (modalInstance, reason) {
-        var modalWindow = openedWindows.get(modalInstance)
+        var modalWindow = openedWindows.get(modalInstance);
         if(!modalWindow) { return; }
         modalWindow = modalWindow.value;
         if (modalWindow) {
