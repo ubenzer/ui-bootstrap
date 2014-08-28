@@ -103,7 +103,7 @@ angular.module('ui.bootstrap.dateparser', [])
       }
 
       if ( isValid(fields.year, fields.month, fields.date) ) {
-        dt = new Date( fields.year, fields.month, fields.date, fields.hours);
+        dt = new Date(Date.UTC(fields.year, fields.month, fields.date, fields.hours));
       }
 
       return dt;

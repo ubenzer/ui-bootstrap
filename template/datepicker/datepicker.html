@@ -1,5 +1,9 @@
-<div ng-switch="datepickerMode" role="application" ng-keydown="keydown($event)">
-  <daypicker ng-switch-when="day" tabindex="0"></daypicker>
-  <monthpicker ng-switch-when="month" tabindex="0"></monthpicker>
-  <yearpicker ng-switch-when="year" tabindex="0"></yearpicker>
-</div>
+<ul class="dropdown-menu datepicker" ng-show="isOpen" ng-style="{top: position.top+'px', left: position.left+'px'}">
+  <li>
+    <div ng-switch="datepickerMode" role="application">
+      <daypicker ng-switch-when="day"></daypicker>
+      <monthpicker ng-switch-when="month"></monthpicker>
+      <yearpicker ng-switch-when="year"></yearpicker>
+    </div>
+  </li>
+</ul>
