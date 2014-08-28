@@ -54,7 +54,7 @@ angular.module('ui.bootstrap.timepicker', [])
         // Evaluate from template
         var hours = getHoursFromTemplate(), minutes = getMinutesFromTemplate();
         if (angular.isDefined( hours ) && angular.isDefined( minutes )) {
-          selected.setHours( hours );
+          selected.setUTCHours( hours );
           refresh();
         }
       } else {
@@ -136,7 +136,7 @@ angular.module('ui.bootstrap.timepicker', [])
       var hours = getHoursFromTemplate();
 
       if ( angular.isDefined(hours) ) {
-        selected.setHours( hours );
+        selected.setUTCHours( hours );
         refresh( 'h' );
       } else {
         invalidate(true);
@@ -155,7 +155,7 @@ angular.module('ui.bootstrap.timepicker', [])
       var minutes = getMinutesFromTemplate();
 
       if ( angular.isDefined(minutes) ) {
-        selected.setMinutes( minutes );
+        selected.setUTCMinutes( minutes );
         refresh( 'm' );
       } else {
         invalidate(undefined, true);
@@ -201,7 +201,7 @@ angular.module('ui.bootstrap.timepicker', [])
   }
 
   function updateTemplate( keyboardChange ) {
-    var hours = selected.getHours(), minutes = selected.getMinutes();
+    var hours = selected.getUTCHours(), minutes = selected.getUTCMinutes();
 
     if ( $scope.showMeridian ) {
       hours = ( hours === 0 || hours === 12 ) ? 12 : hours % 12; // Convert 24 to 12 hour system
@@ -209,12 +209,12 @@ angular.module('ui.bootstrap.timepicker', [])
 
     $scope.hours = keyboardChange === 'h' ? hours : pad(hours);
     $scope.minutes = keyboardChange === 'm' ? minutes : pad(minutes);
-    $scope.meridian = selected.getHours() < 12 ? meridians[0] : meridians[1];
+    $scope.meridian = selected.getUTCHours() < 12 ? meridians[0] : meridians[1];
   }
 
   function addMinutes( minutes ) {
     var dt = new Date( selected.getTime() + minutes * 60000 );
-    selected.setHours( dt.getHours(), dt.getMinutes() );
+    selected.setUTCHours( dt.getUTCHours(), dt.getUTCMinutes() );
     refresh();
   }
 
@@ -231,7 +231,7 @@ angular.module('ui.bootstrap.timepicker', [])
     addMinutes( - minuteStep );
   };
   $scope.toggleMeridian = function() {
-    addMinutes( 12 * 60 * (( selected.getHours() < 12 ) ? 1 : -1) );
+    addMinutes( 12 * 60 * (( selected.getUTCHours() < 12 ) ? 1 : -1) );
   };
 }])
 
