@@ -210,13 +210,35 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
         }
       });
 
+      $rootScope.$on('$locationChangeSuccess', function(evt) {
+        /* Close modals whose closeOnNavigation is true */
+        var opened = openedWindows.keys();
+        if(opened.length === 0) { return; }
+        var tbClosed = [];
+
+        for (var i = 0; i < opened.length; i++) {
+          var modal = openedWindows.get(opened[i]);
+          if (modal.value.closeOnNavigation) {
+            tbClosed.push(modal.key);
+          }
+        }
+
+        if(tbClosed.length > 0) {
+          /* Call apply function for once, not for each close operation. */
+          for (var j = 0; j < tbClosed.length; j++) {
+            $modalStack.dismissAll(tbClosed[j]);
+          }  
+        }
+      });
+
       $modalStack.open = function (modalInstance, modal) {
 
         openedWindows.add(modalInstance, {
           deferred: modal.deferred,
           modalScope: modal.scope,
           backdrop: modal.backdrop,
-          keyboard: modal.keyboard
+          keyboard: modal.keyboard,
+          closeOnNavigation: modal.closeOnNavigation
         });
 
         var body = $document.find('body').eq(0),
@@ -245,7 +267,9 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
       };
 
       $modalStack.close = function (modalInstance, result) {
-        var modalWindow = openedWindows.get(modalInstance).value;
+        var modalWindow = openedWindows.get(modalInstance)
+        if(!modalWindow) { return; }
+        modalWindow = modalWindow.value;
         if (modalWindow) {
           modalWindow.deferred.resolve(result);
           removeModalWindow(modalInstance);
@@ -253,7 +277,9 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
       };
 
       $modalStack.dismiss = function (modalInstance, reason) {
-        var modalWindow = openedWindows.get(modalInstance).value;
+        var modalWindow = openedWindows.get(modalInstance)
+        if(!modalWindow) { return; }
+        modalWindow = modalWindow.value;
         if (modalWindow) {
           modalWindow.deferred.reject(reason);
           removeModalWindow(modalInstance);
@@ -280,7 +306,8 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
     var $modalProvider = {
       options: {
         backdrop: true, //can be also false or 'static'
-        keyboard: true
+        keyboard: true,
+        closeOnNavigation: true
       },
       $get: ['$injector', '$rootScope', '$q', '$http', '$templateCache', '$controller', '$modalStack',
         function ($injector, $rootScope, $q, $http, $templateCache, $controller, $modalStack) {
@@ -361,6 +388,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.transition'])
                 backdrop: modalOptions.backdrop,
                 keyboard: modalOptions.keyboard,
                 windowClass: modalOptions.windowClass,
+                closeOnNavigation: modalOptions.closeOnNavigation,
                 windowTemplateUrl: modalOptions.windowTemplateUrl,
                 size: modalOptions.size
               });
