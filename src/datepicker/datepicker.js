@@ -14,8 +14,8 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
     showWeeks: false,
     startingDay: 1,
     yearRange: 20,
-    minDate: new Date(Date.UTC(2999, 11, 31)),
-    maxDate: new Date(Date.UTC(1900, 1, 1)),
+    minDate: new Date(Date.UTC(1900, 1, 1)),
+    maxDate: new Date(Date.UTC(2999, 11, 31)),
     closeOnDateSelection: true,
     appendToBody: false,
     templateUrl: 'template/datepicker/datepicker.html'
