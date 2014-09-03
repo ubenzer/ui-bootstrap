@@ -263,8 +263,8 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
       };
     }])
 
-  .directive('datepicker', ['$http', '$templateCache', '$compile', '$timeout', '$position',
-    '$document', 'datepickerConfig', function ($http, $templateCache, $compile, $timeout, $position,
+  .directive('datepicker', ['$templateRequest', '$compile', '$timeout', '$position',
+    '$document', 'datepickerConfig', function ($templateRequest, $compile, $timeout, $position,
                                                $document, datepickerConfig) {
 
       return {
@@ -305,11 +305,24 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
             ngModelCtrl = ctrls[1],
             datepickerElement = null;
 
-          $http.get(datepickerConfig.templateUrl, {cache: $templateCache}).then(function(template) {
-            datepickerElement = angular.element(template.data);
+          // Remove default angular.js formatter things.
+          ngModelCtrl.$formatters = [];
+          ngModelCtrl.$parsers = [];
+          ngModelCtrl.$validators = [];
+
+          $templateRequest(datepickerConfig.templateUrl).then(function(template) {
+            datepickerElement = angular.element(template);
             if(ngModelCtrl) { datepickerCtrl.init(ngModelCtrl); }
 
             $compile(datepickerElement)(scope);
+            if(scope.appendToBody) {
+              scope.position = $position.offset(element);
+              $('body').append(datepickerElement);
+            } else {
+              scope.position = $position.position(element);
+              datepickerElement.insertAfter(element);
+            }
+            scope.position.top = scope.position.top + element.prop('offsetHeight');
 
             scope.$watch('ngDisabled', function(value) {
               if(value === true) {
@@ -322,14 +335,6 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
               if(value) {
 
                 if(scope.ngDisabled) { scope.isOpen = false; return; }
-                if(scope.appendToBody) {
-                  scope.position = $position.offset(element);
-                  $('body').append(datepickerElement);
-                } else {
-                  scope.position = $position.position(element);
-                  datepickerElement.insertAfter(element);
-                }
-                scope.position.top = scope.position.top + element.prop('offsetHeight');
 
                 datepickerCtrl.render();
 
