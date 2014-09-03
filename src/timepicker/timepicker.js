@@ -132,7 +132,10 @@ angular.module('ui.bootstrap.timepicker', [])
       }
     };
 
+
+    var firstHour = true;
     $scope.updateHours = function() {
+      if(firstHour) { firstHour = false; return; }
       var hours = getHoursFromTemplate();
 
       if ( angular.isDefined(hours) ) {
@@ -151,7 +154,9 @@ angular.module('ui.bootstrap.timepicker', [])
       }
     });
 
+    var firstMinute = true;
     $scope.updateMinutes = function() {
+      if(firstMinute) { firstMinute = false; return; }
       var minutes = getMinutesFromTemplate();
 
       if ( angular.isDefined(minutes) ) {
@@ -164,9 +169,8 @@ angular.module('ui.bootstrap.timepicker', [])
 
     minutesInputEl.bind('blur', function(e) {
       if ( !$scope.invalidMinutes && $scope.minutes < 10 ) {
-        $scope.$apply( function() {
-          $scope.minutes = pad( $scope.minutes );
-        });
+        $scope.minutes = pad( $scope.minutes );
+        $scope.$apply();
       }
     });
 
@@ -207,8 +211,8 @@ angular.module('ui.bootstrap.timepicker', [])
       hours = ( hours === 0 || hours === 12 ) ? 12 : hours % 12; // Convert 24 to 12 hour system
     }
 
-    $scope.hours = keyboardChange === 'h' ? hours : pad(hours);
-    $scope.minutes = keyboardChange === 'm' ? minutes : pad(minutes);
+    $scope.hours = keyboardChange === 'h' ? hours.toString() : pad(hours);
+    $scope.minutes = keyboardChange === 'm' ? minutes.toString() : pad(minutes);
     $scope.meridian = selected.getUTCHours() < 12 ? meridians[0] : meridians[1];
   }
 
