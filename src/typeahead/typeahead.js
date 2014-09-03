@@ -87,12 +87,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
       //pop-up element used to display matches
       var popUpEl = angular.element('<div typeahead-popup></div>');
       popUpEl.attr({
-        id: popupId,
-        matches: 'matches',
-        active: 'activeIdx',
-        select: 'select(activeIdx)',
-        query: 'query',
-        position: 'position'
+        id: popupId
       });
       //custom item template
       if (angular.isDefined(attrs.typeaheadTemplateUrl)) {
@@ -318,13 +313,6 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
   .directive('typeaheadPopup', function () {
     return {
       restrict:'EA',
-      scope:{
-        matches:'=',
-        query:'=',
-        active:'=',
-        position:'=',
-        select:'&'
-      },
       replace:true,
       templateUrl:'template/typeahead/typeahead-popup.html',
       link:function (scope, element, attrs) {
@@ -336,15 +324,15 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
         };
 
         scope.isActive = function (matchIdx) {
-          return scope.active == matchIdx;
+          return scope.activeIdx == matchIdx;
         };
 
         scope.selectActive = function (matchIdx) {
-          scope.active = matchIdx;
+          scope.activeIdx = matchIdx;
         };
 
         scope.selectMatch = function (activeIdx) {
-          scope.select({activeIdx:activeIdx});
+          scope.select(activeIdx);
         };
       }
     };
