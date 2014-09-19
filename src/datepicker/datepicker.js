@@ -308,7 +308,6 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
           // Remove default angular.js formatter things.
           ngModelCtrl.$formatters = [];
           ngModelCtrl.$parsers = [];
-          ngModelCtrl.$validators = [];
 
           $templateRequest(datepickerConfig.templateUrl).then(function(template) {
             datepickerElement = angular.element(template);
