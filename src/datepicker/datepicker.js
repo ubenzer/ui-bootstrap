@@ -47,6 +47,13 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
         $scope[key] = angular.isDefined($scope[key]) ? $scope[key] : datepickerConfig[key];
       });
 
+      var handleMinMaxDateChange = function(newData, oldData) {
+        if(newData == oldData) { return; }
+        self.refreshView();
+      };
+      $scope.$watch('minDate', handleMinMaxDateChange);
+      $scope.$watch('maxDate', handleMinMaxDateChange);
+
       this.activeDate = angular.copy(today);
 
       this.init = function( ngModelCtrl_ ) {
