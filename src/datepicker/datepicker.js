@@ -21,8 +21,12 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
     templateUrl: 'template/datepicker/datepicker.html'
   })
 
-  .controller('DatepickerController', ['$scope', '$timeout', 'dateFilter', 'datepickerConfig',
-    '$element', 'dateParser', function($scope, $timeout, dateFilter, datepickerConfig, $element, dateParser) {
+  .controller('DatepickerController', ['$scope', '$timeout', '$filter', 'datepickerConfig',
+    '$element', 'dateParser', function($scope, $timeout, $filter, datepickerConfig, $element, dateParser) {
+      // Set datefilter timezone to UTC globally
+      var dateFilter = function(date, format) {
+        return $filter('date')(date, format, 'UTC');
+      };
 
       var today = (function() {
         var d = new Date();
@@ -168,7 +172,7 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
         if(direction < 0) {
           if(!angular.isDate(compareDate)) {
             compareDate = angular.copy(self.firstDate);
-            compareDate.setDate( compareDate.getDate() - 1 );
+            compareDate.setUTCDate( compareDate.getUTCDate() - 1 );
           }
 
           if($scope.minDate && self.dayCompare(compareDate, $scope.minDate) < 0) {
@@ -177,7 +181,7 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
         } else {
           if(!angular.isDate(compareDate)) {
             compareDate = angular.copy(self.lastDate);
-            compareDate.setDate( compareDate.getDate() + 1 );
+            compareDate.setUTCDate( compareDate.getUTCDate() + 1 );
           }
           if($scope.maxDate && self.dayCompare(compareDate, $scope.maxDate) > 0) {
             return false;
@@ -187,7 +191,7 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
       };
 
       this.dayCompare = function(date1, date2) {
-        return (Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()) - Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()));
+        return (Date.UTC(date1.getUTCFullYear(), date1.getUTCMonth(), date1.getUTCDate()) - Date.UTC(date2.getUTCFullYear(), date2.getUTCMonth(), date2.getUTCDate()));
       };
 
       $scope.isActive = function(dateObject) {
@@ -216,9 +220,9 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
       $scope.move = function( direction ) {
         if(!self.isMoveEnabled(direction)) { return; }
 
-        var year = self.activeDate.getFullYear() + direction * (self.step.years || 0),
-          month = self.activeDate.getMonth() + direction * (self.step.months || 0);
-        self.activeDate.setFullYear(year, month, 1);
+        var year = self.activeDate.getUTCFullYear() + direction * (self.step.years || 0),
+          month = self.activeDate.getUTCMonth() + direction * (self.step.months || 0);
+        self.activeDate.setUTCFullYear(year, month, 1);
         self.refreshView();
       };
 
@@ -386,7 +390,11 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
       };
     }])
 
-  .directive('daypicker', ['dateFilter', function (dateFilter) {
+  .directive('daypicker', ['$filter', function ($filter) {
+    // Set datefilter timezone to UTC globally
+    var dateFilter = function(date, format) {
+      return $filter('date')(date, format, 'UTC');
+    };
     return {
       restrict: 'E',
       templateUrl: 'template/datepicker/day.html',
@@ -404,32 +412,32 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
           var dates = new Array(n), current = new Date(startDate), i = 0;
           while ( i < n ) {
             dates[i++] = new Date(current);
-            current.setDate( current.getDate() + 1 );
+            current.setUTCDate( current.getUTCDate() + 1 );
           }
           return dates;
         }
 
         ctrl._refreshView = function() {
-          var year = ctrl.activeDate.getFullYear(),
-            month = ctrl.activeDate.getMonth(),
+          var year = ctrl.activeDate.getUTCFullYear(),
+            month = ctrl.activeDate.getUTCMonth(),
             firstDayOfMonth = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0)),
             lastDayOfMonth = (function() {
               var lastDay = angular.copy(firstDayOfMonth);
-              lastDay.setDate(getDaysInMonth(year, month));
+              lastDay.setUTCDate(getDaysInMonth(year, month));
               return lastDay;
             })(),
-            difference = scope.startingDay - firstDayOfMonth.getDay(),
+            difference = scope.startingDay - firstDayOfMonth.getUTCDay(),
             numDisplayedFromPreviousMonth = (difference > 0) ? 7 - difference : - difference,
             firstDate = angular.copy(firstDayOfMonth);
 
           if ( numDisplayedFromPreviousMonth > 0 ) {
-            firstDate.setDate( - numDisplayedFromPreviousMonth + 1 );
+            firstDate.setUTCDate( - numDisplayedFromPreviousMonth + 1 );
           }
 
           // 42 is the number of days on a six-month calendar
           var days = getDates(firstDate, 42);
           for (var i = 0; i < 42; i ++) {
-            var secondary = days[i].getMonth() !== month;
+            var secondary = days[i].getUTCMonth() !== month;
             days[i] = ctrl.createDateObject(days[i], scope.formatDay);
             days[i].secondary = secondary;
           }
@@ -457,10 +465,10 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
 
         function getISO8601WeekNumber(date) {
           var checkDate = new Date(date);
-          checkDate.setDate(checkDate.getDate() + 4 - (checkDate.getDay() || 7)); // Thursday
+          checkDate.setUTCDate(checkDate.getUTCDate() + 4 - (checkDate.getUTCDay() || 7)); // Thursday
           var time = checkDate.getTime();
-          checkDate.setMonth(0); // Compare with Jan 1
-          checkDate.setDate(1);
+          checkDate.setUTCMonth(0); // Compare with Jan 1
+          checkDate.setUTCDate(1);
           return Math.floor(Math.round((time - checkDate) / 86400000) / 7) + 1;
         }
 
@@ -469,25 +477,25 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
           var direction = 1;
 
           if (key === 'left') {
-            candidateDate.setDate(candidateDate.getDate() - 1);
+            candidateDate.setUTCDate(candidateDate.getUTCDate() - 1);
             direction = -1;
           } else if (key === 'up') {
-            candidateDate.setDate(candidateDate.getDate() - 7);
+            candidateDate.setUTCDate(candidateDate.getUTCDate() - 7);
             direction = -1;
           } else if (key === 'right') {
-            candidateDate.setDate(candidateDate.getDate() + 1);
+            candidateDate.setUTCDate(candidateDate.getUTCDate() + 1);
           } else if (key === 'down') {
-            candidateDate.setDate(candidateDate.getDate() + 7);
+            candidateDate.setUTCDate(candidateDate.getUTCDate() + 7);
           } else if (key === 'pageup') {
-            candidateDate.setMonth(candidateDate.getMonth() - 1, Math.min(getDaysInMonth(candidateDate.getFullYear(), candidateDate.getMonth()), candidateDate.getDate()));
+            candidateDate.setUTCMonth(candidateDate.getUTCMonth() - 1, Math.min(getDaysInMonth(candidateDate.getUTCFullYear(), candidateDate.getUTCMonth()), candidateDate.getUTCDate()));
             direction = -1;
           } else if (key === 'pagedown') {
-            candidateDate.setMonth(candidateDate.getMonth() + 1, Math.min(getDaysInMonth(candidateDate.getFullYear(), candidateDate.getMonth()), candidateDate.getDate()));
+            candidateDate.setUTCMonth(candidateDate.getUTCMonth() + 1, Math.min(getDaysInMonth(candidateDate.getUTCFullYear(), candidateDate.getUTCMonth()), candidateDate.getUTCDate()));
           } else if (key === 'home') {
-            candidateDate.setDate(1);
+            candidateDate.setUTCDate(1);
             direction = -1;
           } else if (key === 'end') {
-            candidateDate.setDate(getDaysInMonth(candidateDate.getFullYear(), candidateDate.getMonth()));
+            candidateDate.setUTCDate(getDaysInMonth(candidateDate.getUTCFullYear(), candidateDate.getUTCMonth()));
           }
 
           if(!ctrl.isMoveEnabled(direction, candidateDate)) {
@@ -502,7 +510,11 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
     };
   }])
 
-  .directive('monthpicker', ['dateFilter', function (dateFilter) {
+  .directive('monthpicker', ['$filter', function ($filter) {
+    // Set datefilter timezone to UTC globally
+    var dateFilter = function(date, format) {
+      return $filter('date')(date, format, 'UTC');
+    };
     return {
       restrict: 'E',
       templateUrl: 'template/datepicker/month.html',
@@ -513,7 +525,7 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
 
         ctrl._refreshView = function() {
           var months = new Array(12),
-            year = ctrl.activeDate.getFullYear();
+            year = ctrl.activeDate.getUTCFullYear();
 
           for ( var i = 0; i < 12; i++ ) {
             months[i] = ctrl.createDateObject(new Date(Date.UTC(year, i, 1)), scope.formatMonth);
@@ -522,7 +534,7 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
           ctrl.firstDate = months[0].date;
           ctrl.lastDate = (function() {
             var lastDay = angular.copy(months[11].date);
-            lastDay.setDate(31);
+            lastDay.setUTCDate(31);
             return lastDay;
           })();
           scope.title = dateFilter(ctrl.activeDate, scope.formatMonthTitle);
@@ -530,7 +542,7 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
         };
 
         ctrl.compare = function(date1, date2) {
-          return Date.UTC( date1.getFullYear(), date1.getMonth() ) - Date.UTC( date2.getFullYear(), date2.getMonth() );
+          return Date.UTC( date1.getUTCFullYear(), date1.getUTCMonth() ) - Date.UTC( date2.getUTCFullYear(), date2.getUTCMonth() );
         };
 
         ctrl._onKeydown = function(key) {
@@ -538,25 +550,25 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
           var direction = 1;
 
           if (key === 'left') {
-            candidateDate.setMonth(candidateDate.getMonth() - 1);
+            candidateDate.setUTCMonth(candidateDate.getUTCMonth() - 1);
             direction = -1;
           } else if (key === 'up') {
-            candidateDate.setMonth(candidateDate.getMonth() - 3);
+            candidateDate.setUTCMonth(candidateDate.getUTCMonth() - 3);
             direction = -1;
           } else if (key === 'right') {
-            candidateDate.setMonth(candidateDate.getMonth() + 1);
+            candidateDate.setUTCMonth(candidateDate.getUTCMonth() + 1);
           } else if (key === 'down') {
-            candidateDate.setMonth(candidateDate.getMonth() + 3);
+            candidateDate.setUTCMonth(candidateDate.getUTCMonth() + 3);
           } else if (key === 'pageup') {
-            candidateDate.setFullYear(candidateDate.getFullYear() - 1);
+            candidateDate.setUTCFullYear(candidateDate.getUTCFullYear() - 1);
             direction = -1;
           } else if (key === 'pagedown') {
-            candidateDate.setFullYear(candidateDate.getFullYear() + 1);
+            candidateDate.setUTCFullYear(candidateDate.getUTCFullYear() + 1);
           } else if (key === 'home') {
-            candidateDate.setMonth(0);
+            candidateDate.setUTCMonth(0);
             direction = -1;
           } else if (key === 'end') {
-            candidateDate.setMonth(11);
+            candidateDate.setUTCMonth(11);
           }
 
           if(!ctrl.isMoveEnabled(direction, candidateDate)) {
@@ -589,14 +601,14 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
         ctrl._refreshView = function() {
           var years = new Array(range);
 
-          for ( var i = 0, start = getStartingYear(ctrl.activeDate.getFullYear()); i < range; i++ ) {
+          for ( var i = 0, start = getStartingYear(ctrl.activeDate.getUTCFullYear()); i < range; i++ ) {
             years[i] = ctrl.createDateObject(new Date(Date.UTC(start + i, 0, 1)), scope.formatYear);
           }
 
           ctrl.firstDate = years[0].date;
           ctrl.lastDate = (function() {
             var lastDay = angular.copy(years[years.length - 1].date);
-            lastDay.setMonth(11, 31);
+            lastDay.setUTCMonth(11, 31);
             return lastDay;
           })();
 
@@ -605,7 +617,7 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
         };
 
         ctrl.compare = function(date1, date2) {
-          return date1.getFullYear() - date2.getFullYear();
+          return date1.getUTCFullYear() - date2.getUTCFullYear();
         };
 
         ctrl._onKeydown = function( key ) {
@@ -613,25 +625,25 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
           var direction = 1;
 
           if (key === 'left') {
-            candidateDate.setFullYear(candidateDate.getFullYear() - 1);
+            candidateDate.setUTCFullYear(candidateDate.getUTCFullYear() - 1);
             direction = -1;
           } else if (key === 'up') {
-            candidateDate.setFullYear(candidateDate.getFullYear() - 5);
+            candidateDate.setUTCFullYear(candidateDate.getUTCFullYear() - 5);
             direction = -1;
           } else if (key === 'right') {
-            candidateDate.setFullYear(candidateDate.getFullYear() + 1);
+            candidateDate.setUTCFullYear(candidateDate.getUTCFullYear() + 1);
           } else if (key === 'down') {
-            candidateDate.setFullYear(candidateDate.getFullYear() + 5);
+            candidateDate.setUTCFullYear(candidateDate.getUTCFullYear() + 5);
           } else if (key === 'pageup') {
-            candidateDate.setFullYear(candidateDate.getFullYear() - ctrl.step.years);
+            candidateDate.setUTCFullYear(candidateDate.getUTCFullYear() - ctrl.step.years);
             direction = -1;
           } else if (key === 'pagedown') {
-            candidateDate.setFullYear(candidateDate.getFullYear() + ctrl.step.years);
+            candidateDate.setUTCFullYear(candidateDate.getUTCFullYear() + ctrl.step.years);
           } else if (key === 'home') {
             direction = -1;
-            candidateDate.setFullYear(getStartingYear(candidateDate.getFullYear()));
+            candidateDate.setUTCFullYear(getStartingYear(candidateDate.getUTCFullYear()));
           } else if (key === 'end') {
-            candidateDate.setFullYear(getStartingYear(candidateDate.getFullYear()) + range - 1);
+            candidateDate.setUTCFullYear(getStartingYear(candidateDate.getUTCFullYear()) + range - 1);
           }
 
           if(!ctrl.isMoveEnabled(direction, candidateDate)) {
