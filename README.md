@@ -36,7 +36,7 @@ cd BOOTSTRAP_FOLDER
 grunt jshint
 grunt html2js
 grunt build:dropdown:modal:tooltip:progressbar:tabs:typeahead:collapse:buttons:popover:datepicker:timepicker
-cp dist/ui-bootstrap-custom-tpls-0.11.0.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.js
-cp dist/ui-bootstrap-custom-tpls-0.11.0.min.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.min.js
+cp dist/ui-bootstrap-custom-tpls-0.12.0.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.js
+cp dist/ui-bootstrap-custom-tpls-0.12.0.min.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.min.js
 
 ```
