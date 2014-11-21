@@ -26,3 +26,17 @@
 9. `grunt jshint` Make sure that the changes you made follows the standarts.
 10. `grunt html2js` Merge templates into JavaScript files.
 11. `grunt build:dropdown:modal:tooltip:progressbar:tabs:timepicker:typeahead:collapse:buttons:popover:datepicker` Build the modules which you want. *Please update this line, if you add other module, people will copy/paste this.*
+
+## A script stub to easily test it with Connect.
+
+```bash
+#!/bin/bash
+
+cd BOOTSTRAP_FOLDER
+grunt jshint
+grunt html2js
+grunt build:dropdown:modal:tooltip:progressbar:tabs:typeahead:collapse:buttons:popover:datepicker:timepicker
+cp dist/ui-bootstrap-custom-tpls-0.11.0.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.js
+cp dist/ui-bootstrap-custom-tpls-0.11.0.min.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.min.js
+
+```
