@@ -132,10 +132,7 @@ angular.module('ui.bootstrap.timepicker', [])
       }
     };
 
-
-    var firstHour = true;
     $scope.updateHours = function() {
-      if(firstHour) { firstHour = false; return; }
       var hours = getHoursFromTemplate();
 
       if ( angular.isDefined(hours) ) {
@@ -154,9 +151,7 @@ angular.module('ui.bootstrap.timepicker', [])
       }
     });
 
-    var firstMinute = true;
     $scope.updateMinutes = function() {
-      if(firstMinute) { firstMinute = false; return; }
       var minutes = getMinutesFromTemplate();
 
       if ( angular.isDefined(minutes) ) {
