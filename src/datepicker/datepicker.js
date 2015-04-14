@@ -326,13 +326,10 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
 
             $compile(datepickerElement)(scope);
             if(scope.appendToBody) {
-              scope.position = $position.offset(element);
               $('body').append(datepickerElement);
             } else {
-              scope.position = $position.position(element);
               datepickerElement.insertAfter(element);
             }
-            scope.position.top = scope.position.top + element.prop('offsetHeight');
 
             scope.$watch('ngDisabled', function(value) {
               if(value === true) {
@@ -347,6 +344,13 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
                 if(scope.ngDisabled) { scope.isOpen = false; return; }
 
                 datepickerCtrl.render();
+
+                if(scope.appendToBody) {
+                  scope.position = $position.offset(element);
+                } else {
+                  scope.position = $position.position(element);
+                }
+                scope.position.top = scope.position.top + element.prop('offsetHeight');
 
                 $timeout(function() {
                   element.focus();
