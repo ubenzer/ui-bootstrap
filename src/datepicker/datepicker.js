@@ -372,11 +372,12 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
                 });
               }
             }
-            element.bind('focus click', function() {
+            element.bind('focus click', function(e) {
               if(scope.ngDisabled) { return; }
               scope.$apply(function() {
                 scope.isOpen = true;
               });
+              preventDefault(e);
             });
             element.bind('blur', function() {
               scope.$apply(function() {
