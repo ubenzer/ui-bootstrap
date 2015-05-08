@@ -1,4 +1,4 @@
-describe('popover', function() {
+describe('popover template', function() {
   var elm,
       elmBody,
       scope,
@@ -10,86 +10,70 @@ describe('popover', function() {
 
   // load the template
   beforeEach(module('template/popover/popover.html'));
+  beforeEach(module('template/popover/popover-template.html'));
+
+  beforeEach(inject(function ($templateCache) {
+    $templateCache.put('myUrl', [200, '<span>{{ myTemplateText }}</span>', {}]);
+  }));
 
   beforeEach(inject(function($rootScope, $compile) {
     elmBody = angular.element(
-      '<div><span popover="popover text">Selector Text</span></div>'
+      '<div><span popover-template="templateUrl">Selector Text</span></div>'
     );
 
     scope = $rootScope;
     $compile(elmBody)(scope);
+    scope.templateUrl = 'myUrl';
+
     scope.$digest();
     elm = elmBody.find('span');
     elmScope = elm.scope();
     tooltipScope = elmScope.$$childTail;
-  }));
-
-  it('should not be open initially', inject(function() {
-    expect( tooltipScope.isOpen ).toBe( false );
-
-    // We can only test *that* the popover-popup element wasn't created as the
-    // implementation is templated and replaced.
-    expect( elmBody.children().length ).toBe( 1 );
   }));
 
   it('should open on click', inject(function() {
     elm.trigger( 'click' );
     expect( tooltipScope.isOpen ).toBe( true );
 
-    // We can only test *that* the popover-popup element was created as the
-    // implementation is templated and replaced.
     expect( elmBody.children().length ).toBe( 2 );
   }));
 
-  it('should close on second click', inject(function() {
-    elm.trigger( 'click' );
+  it('should not open on click if templateUrl is empty', inject(function() {
+    scope.templateUrl = null;
+    scope.$digest();
+
     elm.trigger( 'click' );
     expect( tooltipScope.isOpen ).toBe( false );
+
+    expect( elmBody.children().length ).toBe( 1 );
   }));
 
-  it('should not unbind event handlers created by other directives - issue 456', inject( function( $compile ) {
-
-    scope.click = function() {
-      scope.clicked = !scope.clicked;
-    };
-
-    elmBody = angular.element(
-      '<div><input popover="Hello!" ng-click="click()" popover-trigger="mouseenter"/></div>'
-    );
-    $compile(elmBody)(scope);
+  it('should show updated text', inject(function() {
+    scope.myTemplateText = 'some text';
     scope.$digest();
 
-    elm = elmBody.find('input');
-
-    elm.trigger( 'mouseenter' );
-    elm.trigger( 'mouseleave' );
-    expect(scope.clicked).toBeFalsy();
-
-    elm.click();
-    expect(scope.clicked).toBeTruthy();
-  }));
-
-  it('should popup with animate class by default', inject(function() {
     elm.trigger( 'click' );
     expect( tooltipScope.isOpen ).toBe( true );
 
-    expect(elmBody.children().eq(1)).toHaveClass('fade');
+    expect( elmBody.children().eq(1).text().trim() ).toBe( 'some text' );
+
+    scope.myTemplateText = 'new text';
+    scope.$digest();
+
+    expect( elmBody.children().eq(1).text().trim() ).toBe( 'new text' );
   }));
 
-  it('should popup without animate class when animation disabled', inject(function($compile) {
-    elmBody = angular.element(
-      '<div><span popover="popover text" popover-animation="false">Selector Text</span></div>'
-    );
-
-    $compile(elmBody)(scope);
-    scope.$digest();
-    elm = elmBody.find('span');
-    elmScope = elm.scope();
-    tooltipScope = elmScope.$$childTail;
-
+  it('should hide popover when template becomes empty', inject(function ($timeout) {
     elm.trigger( 'click' );
     expect( tooltipScope.isOpen ).toBe( true );
-    expect(elmBody.children().eq(1)).not.toHaveClass('fade');
+
+    scope.templateUrl = '';
+    scope.$digest();
+
+    expect( tooltipScope.isOpen ).toBe( false );
+
+    $timeout.flush();
+    expect( elmBody.children().length ).toBe( 1 );
   }));
 
   describe('supports options', function () {
@@ -98,7 +82,7 @@ describe('popover', function() {
 
       it('can specify an alternative, valid placement', inject(function ($compile) {
         elmBody = angular.element(
-          '<div><span popover="popover text" popover-placement="left">Trigger here</span></div>'
+          '<div><span popover-template="templateUrl" popover-placement="left">Trigger</span></div>'
         );
         $compile(elmBody)(scope);
         scope.$digest();
@@ -120,7 +104,7 @@ describe('popover', function() {
 
       it('can specify a custom class', inject(function ($compile) {
         elmBody = angular.element(
-          '<div><span popover="popover text" popover-class="custom">Trigger here</span></div>'
+          '<div><span popover-template="templateUrl" popover-class="custom">Trigger</span></div>'
         );
         $compile(elmBody)(scope);
         scope.$digest();
@@ -140,6 +124,6 @@ describe('popover', function() {
 
   });
 
-});
 
+});
 

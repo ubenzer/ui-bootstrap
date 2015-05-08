@@ -6,6 +6,8 @@
 
   <div class="popover-inner">
       <h3 class="popover-title" ng-bind="title" ng-if="title"></h3>
-      <div class="popover-content" ng-bind="content"></div>
+      <div class="popover-content"
+        tooltip-template-transclude="contentExp()"
+        tooltip-template-transclude-scope="originScope()"></div>
   </div>
 </div>
