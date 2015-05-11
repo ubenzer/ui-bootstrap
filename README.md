@@ -1,5 +1,11 @@
 # [AngularJS](http://angularjs.org/) directives specific to [Bootstrap](http://getbootstrap.com)
 
+## Current fork status
+
+Modal is in 0.12.1 because 0.13.0 version of modal is f.cked up in Angular 1.4.x. 
+Everything is in 0.13.0
+Datepicker is completely forked and not watched.
+
 ## Updating from upstream and making changes
 
 ### Setting up for the first time
@@ -35,8 +41,8 @@
 cd BOOTSTRAP_FOLDER
 grunt jshint
 grunt html2js
-grunt build:dropdown:modal:tooltip:progressbar:tabs:collapse:buttons:popover:datepicker:timepicker
-cp dist/ui-bootstrap-custom-tpls-0.12.1.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.js
-cp dist/ui-bootstrap-custom-tpls-0.12.1.min.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.min.js
+grunt build:dropdown:modal:tooltip:progressbar:tabs:buttons:popover:datepicker:timepicker
+cp dist/ui-bootstrap-custom-tpls-0.13.0.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.js
+cp dist/ui-bootstrap-custom-tpls-0.13.0.min.js CONNECT_FOLDER/ui/lib/angular/ui-bootstrap-tpls.min.js
 
 ```
