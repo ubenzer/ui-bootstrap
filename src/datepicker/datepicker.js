@@ -352,10 +352,8 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
                 }
                 scope.position.top = scope.position.top + element.prop('offsetHeight');
 
-                $timeout(function() {
-                  element.focus();
-                  $document.bind('click', documentClickBind);
-                });
+                element.focus();
+                $document.bind('click', documentClickBind);
               } else {
                 $document.unbind('click', documentClickBind);
               }
@@ -372,12 +370,12 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
                 });
               }
             }
-            element.bind('focus click', function(e) {
+            element.bind('focus', function(e) {
               if(scope.ngDisabled) { return; }
-              scope.$apply(function() {
+              scope.$applyAsync(function() {
                 scope.isOpen = true;
               });
-              preventDefault(e);
+              e.stopPropagation();
             });
             element.bind('blur', function() {
               scope.$apply(function() {
