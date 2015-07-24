@@ -245,6 +245,10 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
                   element.after( tooltip );
                 }
               });
+              
+              tooltip.bind("click", function(event) {
+                event.stopPropagation();
+              });
 
               tooltipLinkedScope.$watch(function () {
                 $timeout(positionTooltip, 0, false);
@@ -322,7 +326,14 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
             var unregisterTriggers = function () {
               element.unbind(triggers.show, showTooltipBind);
               element.unbind(triggers.hide, hideTooltipBind);
+              /* if our custom window click event is added */
+              angular.element($window).unbind("click", bindWindowClickEvent);
             };
+
+            function bindWindowClickEvent() {
+              hideTooltipBind();
+              angular.element($window).unbind("click", bindWindowClickEvent);
+            }
 
             function prepTriggers() {
               var val = attrs[ prefix + 'Trigger' ];
@@ -333,8 +344,18 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
               if ( triggers.show === triggers.hide ) {
                 element.bind( triggers.show, toggleTooltipBind );
               } else {
-                element.bind( triggers.show, showTooltipBind );
-                element.bind( triggers.hide, hideTooltipBind );
+                if (triggers.hide === "windowClick") {
+                  element.bind(triggers.show, function() {
+                  if (!ttScope.isOpen) {
+                    $timeout(function() {
+                      angular.element($window).bind("click", bindWindowClickEvent);
+                    });
+                    showTooltipBind();
+                  }
+                });
+              } else {
+                element.bind(triggers.show, showTooltipBind);
+                element.bind(triggers.hide, hideTooltipBind);
               }
             }
             prepTriggers();
