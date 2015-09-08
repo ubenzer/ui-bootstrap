@@ -245,8 +245,8 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
                   element.after( tooltip );
                 }
               });
-              
-              tooltip.bind("click", function(event) {
+
+              tooltip.bind('click', function(event) {
                 event.stopPropagation();
               });
 
@@ -327,35 +327,36 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
               element.unbind(triggers.show, showTooltipBind);
               element.unbind(triggers.hide, hideTooltipBind);
               /* if our custom window click event is added */
-              angular.element($window).unbind("click", bindWindowClickEvent);
+              angular.element($window).unbind('click', bindWindowClickEvent);
             };
 
             function bindWindowClickEvent() {
               hideTooltipBind();
-              angular.element($window).unbind("click", bindWindowClickEvent);
+              angular.element($window).unbind('click', bindWindowClickEvent);
             }
 
             function prepTriggers() {
-              var val = attrs[ prefix + 'Trigger' ];
+              var val = attrs[prefix + 'Trigger'];
               unregisterTriggers();
 
-              triggers = getTriggers( val );
+              triggers = getTriggers(val);
 
-              if ( triggers.show === triggers.hide ) {
-                element.bind( triggers.show, toggleTooltipBind );
+              if (triggers.show === triggers.hide) {
+                element.bind(triggers.show, toggleTooltipBind);
               } else {
-                if (triggers.hide === "windowClick") {
-                  element.bind(triggers.show, function() {
-                  if (!ttScope.isOpen) {
-                    $timeout(function() {
-                      angular.element($window).bind("click", bindWindowClickEvent);
-                    });
-                    showTooltipBind();
-                  }
-                });
-              } else {
-                element.bind(triggers.show, showTooltipBind);
-                element.bind(triggers.hide, hideTooltipBind);
+                if (triggers.hide === 'windowClick') {
+                  element.bind(triggers.show, function () {
+                    if (!ttScope.isOpen) {
+                      $timeout(function () {
+                        angular.element($window).bind('click', bindWindowClickEvent);
+                      });
+                      showTooltipBind();
+                    }
+                  });
+                } else {
+                  element.bind(triggers.show, showTooltipBind);
+                  element.bind(triggers.hide, hideTooltipBind);
+                }
               }
             }
             prepTriggers();
