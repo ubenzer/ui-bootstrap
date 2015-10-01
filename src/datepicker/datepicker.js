@@ -316,6 +316,8 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
             ngModelCtrl = ctrls[1],
             datepickerElement = null;
 
+          var body = $('body');
+
           // Remove default angular.js formatter things.
           ngModelCtrl.$formatters = [];
           ngModelCtrl.$parsers = [];
@@ -326,7 +328,7 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
 
             $compile(datepickerElement)(scope);
             if(scope.appendToBody) {
-              $('body').append(datepickerElement);
+              body.append(datepickerElement);
             } else {
               datepickerElement.insertAfter(element);
             }
@@ -345,16 +347,24 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
 
                 datepickerCtrl.render();
 
-                if(scope.appendToBody) {
-                  scope.position = $position.offset(element);
-                } else {
-                  scope.position = $position.position(element);
-                }
-                scope.position.top = scope.position.top + element.prop('offsetHeight');
+                $timeout(function() {
+                  datepickerElement.css({display: 'block'});
 
-                element.focus();
+                  var calculatedPos = $position.positionElements(element, datepickerElement, 'bottom-left', scope.appendToBody);
+                  datepickerElement.css(calculatedPos);
+                  // check if it fits vertically
+                  if ($position.offset(datepickerElement).top + datepickerElement.prop('offsetHeight') - body.prop('scrollTop') > document.documentElement.clientHeight) {
+                    calculatedPos = $position.positionElements(element, datepickerElement, 'top-left', scope.appendToBody);
+                    calculatedPos.top -= 10; // add a small margin to compensate shadows etc.
+                    datepickerElement.css(calculatedPos);
+                  }
+                  element.focus();
+                });
+
+
                 $document.bind('click', documentClickBind);
               } else {
+                datepickerElement.css({display: 'none'});
                 $document.unbind('click', documentClickBind);
               }
             });
