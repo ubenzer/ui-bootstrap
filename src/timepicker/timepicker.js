@@ -5,8 +5,6 @@ angular.module('ui.bootstrap.timepicker', [])
   minuteStep: 1,
   showMeridian: true,
   meridians: null,
-  readonlyInput: false,
-  mousewheel: true,
   arrowkeys: true
 })
 
@@ -26,17 +24,11 @@ angular.module('ui.bootstrap.timepicker', [])
     var hoursInputEl = inputs.eq(0),
         minutesInputEl = inputs.eq(1);
 
-    var mousewheel = angular.isDefined($attrs.mousewheel) ? $scope.$parent.$eval($attrs.mousewheel) : timepickerConfig.mousewheel;
-    if ( mousewheel ) {
-      this.setupMousewheelEvents( hoursInputEl, minutesInputEl );
-    }
-
     var arrowkeys = angular.isDefined($attrs.arrowkeys) ? $scope.$parent.$eval($attrs.arrowkeys) : timepickerConfig.arrowkeys;
     if (arrowkeys) {
       this.setupArrowkeyEvents( hoursInputEl, minutesInputEl );
     }
 
-    $scope.readonlyInput = angular.isDefined($attrs.readonlyInput) ? $scope.$parent.$eval($attrs.readonlyInput) : timepickerConfig.readonlyInput;
     this.setupInputEvents( hoursInputEl, minutesInputEl );
   };
 
@@ -101,29 +93,6 @@ angular.module('ui.bootstrap.timepicker', [])
     return ( angular.isDefined(value) && value.toString().length < 2 ) ? '0' + value : value.toString();
   }
 
-  // Respond on mousewheel spin
-  this.setupMousewheelEvents = function( hoursInputEl, minutesInputEl ) {
-    var isScrollingUp = function(e) {
-      if (e.originalEvent) {
-        e = e.originalEvent;
-      }
-      //pick correct delta variable depending on event
-      var delta = (e.wheelDelta) ? e.wheelDelta : -e.deltaY;
-      return (e.detail || delta > 0);
-    };
-
-    hoursInputEl.bind('mousewheel wheel', function(e) {
-      $scope.$apply( (isScrollingUp(e)) ? $scope.incrementHours() : $scope.decrementHours() );
-      e.preventDefault();
-    });
-
-    minutesInputEl.bind('mousewheel wheel', function(e) {
-      $scope.$apply( (isScrollingUp(e)) ? $scope.incrementMinutes() : $scope.decrementMinutes() );
-      e.preventDefault();
-    });
-
-  };
-
   // Respond on up/down arrowkeys
   this.setupArrowkeyEvents = function( hoursInputEl, minutesInputEl ) {
     hoursInputEl.bind('keydown', function(e) {
@@ -154,12 +123,6 @@ angular.module('ui.bootstrap.timepicker', [])
   };
 
   this.setupInputEvents = function( hoursInputEl, minutesInputEl ) {
-    if ( $scope.readonlyInput ) {
-      $scope.updateHours = angular.noop;
-      $scope.updateMinutes = angular.noop;
-      return;
-    }
-
     var invalidate = function(invalidHours, invalidMinutes) {
       ngModelCtrl.$setViewValue( null );
       ngModelCtrl.$setValidity('time', false);
@@ -279,7 +242,9 @@ angular.module('ui.bootstrap.timepicker', [])
     require: ['timepicker', '?^ngModel'],
     controller:'TimepickerController',
     replace: true,
-    scope: {},
+    scope: {
+      ngDisabled: '=?'
+    },
     templateUrl: 'template/timepicker/timepicker.html',
     link: function(scope, element, attrs, ctrls) {
       var timepickerCtrl = ctrls[0], ngModelCtrl = ctrls[1];

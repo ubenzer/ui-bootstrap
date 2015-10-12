@@ -1,11 +1,11 @@
 <div class="row">
  	<div class="form-inline">
     	<div style="margin-left: 0; margin-right: 0" class="form-group" ng-class="{'has-error': invalidHours}">
-    		<input style="width: 45px;" type="text" ng-model="hours" ng-change="updateHours()" class="form-control text-center" ng-mousewheel="incrementHours()" ng-disabled="readonlyInput" maxlength="2" />
+    		<input style="width: 45px;" type="text" ng-model="hours" ng-change="updateHours()" class="form-control text-center" ng-mousewheel="incrementHours()" ng-disabled="ngDisabled" maxlength="2" />
     	</div>
     	<div style="width: 10px; margin-left: 0; margin-right: 0" class="form-group text-center">:</div>
     	<div style="margin-left: 0; margin-right: 0" class="form-group" ng-class="{'has-error': invalidMinutes}">
-    		<input style="width: 45px;" type="text" ng-model="minutes" ng-change="updateMinutes()" class="form-control text-center" ng-disabled="readonlyInput" maxlength="2">
+    		<input style="width: 45px;" type="text" ng-model="minutes" ng-change="updateMinutes()" class="form-control text-center" ng-disabled="ngDisabled" maxlength="2">
     	</div>
 	</div>
 </div>
