@@ -1,5 +1,7 @@
 # [AngularJS](http://angularjs.org/) directives specific to [Bootstrap](http://getbootstrap.com)
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 ## Current fork status
 
 Modal is in 0.12.1 because 0.13.0 version of modal is f.cked up in Angular 1.4.x. 
