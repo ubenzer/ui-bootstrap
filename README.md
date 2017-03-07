@@ -1,5 +1,7 @@
 # [AngularJS](http://angularjs.org/) directives specific to [Bootstrap](http://getbootstrap.com)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ubenzer/ui-bootstrap.svg)](https://greenkeeper.io/)
+
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
 ## Current fork status
